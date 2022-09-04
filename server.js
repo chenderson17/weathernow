@@ -11,7 +11,7 @@ var city = [];
 const http = require("http");
 const WebSocket = require("ws");
 
-
+//the clients variable is not used at the moment
 var clients = [];
 
 app.use(bodyParser.urlencoded({extended:true}));

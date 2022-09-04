@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Current Weather</title>
+ <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+ <h2>city name: <%=city.name%></h2>
+ <h1 id="website-title">WeatherNow</h1>
+ <form action="/" method="POST">
+  <input type="text" name="searchBar" id="searchBar" placeholder="enter a city name">
+  <button type="submit" name="searchBtn" value="i am a search button">Search</button>
+  <ul id="cities">
+
+  </ul>
+  </form>
+ <script type="module" src="index.js"></script>
+</body>
+<script type="text/javascript">
+  const searchBar = document.getElementById("searchBar");
+    const ws = new WebSocket("ws://localhost:8080");
+    ws.addEventListener("open", () => {
+      searchBar.addEventListener("input", (press) => {
+        ws.send(press.target.value)
+      })
+    ws.addEventListener("message", function (event) {
+      })
+      
+      
+    })
+</script>
+</html>

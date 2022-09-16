@@ -6,18 +6,34 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <title>Current Weather</title>
  <link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Cairo+Play:wght@200;300;400;500&family=Roboto:wght@300;400&display=swap"
+  rel="stylesheet">
 </head>
-
-<body>
- <h2>city name: <%=city.name%></h2>
- <h1 id="website-title">WeatherNow</h1>
+<body id="body-home">
+    <header>
+ 
+ </header>
+   <main id="home-main-search">
+    <h1 id="website-title">Weather<span class="cherry-red">Now</span></h1>
  <form action="/" method="POST">
-  <input type="text" name="searchBar" id="searchBar" placeholder="enter a city name">
-  <button type="submit" name="searchBtn" value="i am a search button">Search</button>
+  <input type="text" name="searchBar" id="searchBar" placeholder="Enter a City Name" autocomplete="off">
   <ul id="cities">
-
   </ul>
   </form>
+  </main>
+  <footer>
+<p>&#169; 2022 WeatherNow</p>
+  </footer>
+
  <script type="module" src="index.js"></script>
 </body>
 <script type="text/javascript">
@@ -25,12 +41,33 @@
     const ws = new WebSocket("ws://localhost:8080");
     ws.addEventListener("open", () => {
       searchBar.addEventListener("input", (press) => {
-        ws.send(press.target.value)
+        ws.send(press.target.value);
       })
-    ws.addEventListener("message", function (event) {
+    ws.addEventListener("message", function (m) {
+       var cities = JSON.parse(m.data)
+        displayCities(cities);
       })
-      
       
     })
+    let citySelect = document.getElementById("cities");
+      const displayCities = (cities) => {
+        const htmlString = cities.map((city) => {
+          console.log(cities);
+          if (city.country == "US") {
+            return `<li><button name=cityButton value= ${cities.indexOf(city)}>${city.name}, ${city.state}</button></li>`;
+          }
+          else{
+          return `<li><button name=cityButton value= ${cities.indexOf(city)}>${city.name}, ${city.country}</button></li>`;
+          }
+        }).join('');
+        citySelect.innerHTML = htmlString;
+      };
+      //https://www.youtube.com/watch?v=wxz5vJ1BWrc the displays city function and searchbar functionality code based off the linked video by James Q Quick.
+      function isSearchActive(){
+        if(document.activeElement != searchBar){
+          citySelect.innerHTML = "";
+        }
+      }
+      
 </script>
 </html>

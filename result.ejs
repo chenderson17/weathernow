@@ -5,15 +5,66 @@
  <meta http-equiv="X-UA-Compatible" content="IE=edge">
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <title>Result</title>
+ <link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo+Play:wght@200;300&display=swap" rel="stylesheet">
 </head>
-<body>
- <div class="container">
-  <div class="tempurature-container">
-   <h3>Temperature</h3>
+<body id="result-body">
+<h1 id="website-title">Weather<span class="cherry-red">Now</span></h1>
+<div class="container-result-data">
+<div class="result-name-row">
+ <h2><%=result.name%>, <%=result.country%></h2>
+ </div>
+<div class="result-description-temperature-container">
+ <div class="description-container">
+
+  <h3>Description</h3>
+  <p><%=result.description.description%></p>
+ </div>
+
+
+ <div class="temperature-container">
+  <h3>Temperature</h3>
+  <p><%= result.main.temp %>&#xB0;F</p>
+  <h4>Feels Like</h4>
+  <%= result.main.feels_like%>&#xB0;F</p>
+  <h4>Min</h4>
+  <p><%=result.main.temp_min%>&#xB0;F</p>
+  <h4>Max</h4>
+  <p><%= result.main.temp_max%>&#xB0;F</p>
+ </div>
+
+</div>
+
+
+<div class="clouds-humidity-container">
+   <div class="clouds-container">
+    <h4>Clouds</h4>
+    <p>
+     <%=result.cloud%>%
+    </p>
+ </div>
+ <div class="humidity-container">
+  <h4>Humidity</h4>
+  <p><%= result.main.humidity%>%</p>
+ </div>
+
+
+ <div class="wind-pressure-container">
+  <div class="wind-container">
+   <h4>Wind Speed</h4>
+   <p><%= result.wind%> mph</p>
   </div>
-  <div class="temperature-details-container">
-   <h3>Temperature Details</h3>
+  <div class="pressure-container">
+   <h4>Pressure</h4>
+   <p><%=result.main.pressure%> kPa</p>
   </div>
+ 
+ </div>
+</div>
+
+
  </div>
 </body>
 </html>

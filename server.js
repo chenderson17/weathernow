@@ -2,24 +2,17 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const axios = require("axios");
-const path = require("path");
 var bodyParser = require("body-parser");
-const citySearch = "";
 const ejs = require("ejs");
-var city = [];
-
+var cities = [];
 const http = require("http");
 const WebSocket = require("ws");
-
-//the clients variable is not used at the moment
-var clients = [];
-
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.set("view engine", "ejs");
-
-
 const WebSocketServer = require("ws");
+const { json } = require("body-parser");
+const { setDefaultResultOrder } = require("dns");
 const wss = new WebSocketServer.Server({port:8080});
 wss.on("connection",ws=>{
    console.log("Client is connected");
@@ -27,13 +20,12 @@ wss.on("connection",ws=>{
    ws.on("message", data =>{
       if(data != ""){
       axios.get(`http://api.openweathermap.org/geo/1.0/direct?q=${data}&limit=10&appid=${process.env.APP_ID}`).then(response=>{
-       city = response.data;
-      
+       cities = response.data;
+       ws.send(JSON.stringify(cities));
 }).catch(error=>{
  console.log(error);
 })
-   ws.on("message", (request)=>{
-   })
+  
       }
    
    })
@@ -44,24 +36,12 @@ wss.on("connection",ws=>{
       console.log("An error has occurred.");
    }
 })
-const getCity = function(){
-   return city;
-}
-
-function updateCity(){
-   console.log(city);
-   city = getCity();
-}
-setInterval(updateCity,1000);
-
 
 //static
 app.get("/", (request,response)=>{
-   console.log(request.body.searchBar);
  try{
   response.render("index",{
-     city:city,
-     updateCity:updateCity
+     cities:cities,
   });
   
  }
@@ -70,24 +50,43 @@ app.get("/", (request,response)=>{
  }
 });
 
-//app.get("/result", function(request,response){
- //response.render("result");
-//})
-//need post request.
-app.post("/", function(request,response,next){
- var search = request.body.searchBar.toLowerCase();
- console.log(request.body);
- axios.get(`https://api.openweathermap.org/data/2.5/weather?&q=Berlin&appid=${process.env.APP_ID}&units=imperial`).then(res => {
- //console.log(res.data);
- //debug:
- //console.log("Temperature: " + res.data.main.temp);
- //console.log("Weather Description: " + res.data.weather[0].main);
+
+app.post("/", async (request,response,next)=>{
+var cityButton = request.body.cityButton;
+var citySelection = cities[cityButton];
+var weatherData = axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${citySelection.lat}&lon=${citySelection.lon}&units=imperial&appid=${process.env.APP_ID}`).then(res => {
+  return res;
 }).catch(error=>{
  console.log(error);
 })
-response.render("result");
+
+
+weatherObject = weatherData.then(data=>{
+   console.log(data);
+   console.log(citySelection.state == undefined);
+   return data;
+}).then(result=>{
+   if(citySelection.state != undefined){
+      var obj = {name:citySelection.name.toUpperCase(), country:citySelection.state.toUpperCase(), main: result.data.main, description:result.data.weather[0],wind:result.data.wind.speed, cloud:result.data.clouds.all};
+    return obj;
+
+   }
+   else{
+   var obj = {name:citySelection.name.toUpperCase(), country:citySelection.country.toUpperCase(), main: result.data.main, description:result.data.weather[0], wind:result.data.wind.speed, cloud:result.data.clouds.all};
+   return obj;
+   }
+})
+const result = await weatherObject
+ response.render("result",{
+   result:result
+ 
+ })
+
 next();
 })
+
+
+
 app.use(express.static(__dirname + "/"));
 
 
